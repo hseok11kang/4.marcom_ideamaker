@@ -582,14 +582,16 @@ with st.form("input_form"):
         brand = st.text_input("브랜드 / 제품명 또는 카테고리", value="")
         target_day = st.date_input("대상 날짜 (해당 포스트를 게시하고자 하는 날짜)", value=date.today() + timedelta(days=3))
     with col2:
-        country = st.text_input("대상 국가(예: 대한민국, United States, France)", value=DEFAULT_COUNTRY)
+        country = st.text_input("대상 국가", value=DEFAULT_COUNTRY)  # 예시 문구 제거
         channels = st.multiselect("대상 채널", options=CHANNELS, default=["Instagram", "X(Twitter)"])
     with col3:
-        goals = st.multiselect("Social Marketing 목표 설정", options=GOALS, default=["Engagement 생성(CTA)"])
+        # [Social Marketing 목표 설정] 삭제됨
         n_cards = st.slider("생성 카드 수", min_value=1, max_value=10, value=6, step=1)
     with col4:
-        model = st.selectbox("모델", ["gemini-2.5-flash", "gemini-2.5-flash-lite"], index=0)
-        creativity = st.slider("창의성(Temperature)", 0.0, 1.0, 0.6, 0.1)
+        # [모델] 삭제됨 → 내부 디폴트 사용
+        # [창의성] 삭제됨 → 내부 디폴트 사용
+        st.markdown("&nbsp;", unsafe_allow_html=True)
+        st.markdown("&nbsp;", unsafe_allow_html=True)
     submitted = st.form_submit_button("LLM 리서치 & 아이디어 생성")
 
 # 세션 상태
@@ -610,9 +612,13 @@ if submitted:
     if not brand.strip():
         st.error("브랜드와 제품명 또는 카테고리를 입력해주세요")
         st.stop()
-    if not goals:
-        st.error("Social Marketing 목표를 최소 1개 이상 선택해 주세요.")
-        st.stop()
+
+    # 삭제된 목표 옵션 대신, 모든 목표를 포괄적으로 사용
+    goals = GOALS[:]  # 전체 목표 사용
+
+    # 삭제된 모델/창의성 옵션 대신 고정값 사용
+    model = "gemini-2.5-flash"
+    creativity = 0.60
 
     with st.status("🤖 AI가 해당 국가의 주요 Event를 리서치 및 정리하고 있어요.", state="running") as s:
         events, err1 = research_local_events_with_llm(
